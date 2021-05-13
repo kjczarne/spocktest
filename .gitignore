@@ -1,0 +1,6 @@
+*.key
+*.egg*
+__pycache__
+*.ipynb
+venv
+*.env
