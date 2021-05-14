@@ -1,4 +1,4 @@
-from typing import Any, Callable, Literal, Tuple, Type, List, NewType, Union, Optional
+from typing import Any, Callable, Literal, Tuple, Type, List, NewType, Union, Optional, Dict
 
 Context = Union[Tuple, Any, None]
 """Context passed around from setup to test"""
@@ -24,3 +24,9 @@ SupportedAssertions = Literal[
     'assertNotEqual'
 ]
 """Supported unittest assertion functions."""
+
+SnippetLinesCollection = Dict[str, List[str]]
+"""Intermediate Snippet Collection used by the parser"""
+
+SnippetsCollection = Dict[str, str]
+"""Snippet Collection returned by the parser"""
