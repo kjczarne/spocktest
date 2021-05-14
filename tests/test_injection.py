@@ -2,6 +2,7 @@ import os
 import unittest
 import textwrap
 from spocktest.inject import inject
+from spocktest.defaults import SNIPPET_INJECT
 
 
 class TestInjection(unittest.TestCase):
@@ -18,10 +19,8 @@ class TestInjection(unittest.TestCase):
             os.path.join(
                 os.path.dirname(__file__),
                 'res'
-                # ,
-                # 'inject.md'
             ),
-            r'# --Snippet--: {{ID}}',
+            SNIPPET_INJECT,
             self.snippets,
             debug=True
         ).splitlines()
