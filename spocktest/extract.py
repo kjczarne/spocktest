@@ -76,7 +76,7 @@ def get_snippet_code(
             # set parser state to in-snippet
             STATE.is_snippet = True
 
-        elif re.match(finish, line):
+        elif re.search(finish, line):
             if STATE.current_snippet_id:
                 snippet = __snippet_finish_found(
                     snippets[STATE.current_snippet_id]
