@@ -34,16 +34,13 @@ class TestGetSnippetCode(unittest.TestCase):
                 r'(?<=def ){{ID}}(?=\(print\))',
                 f
             )
-            expected = textwrap.dedent(
-                """
-                # This should appear in the snippet code
-                a = 1
-                b = 2
-                a != b  # True
-                """
-            )
-            print(actual)
-            # self.assertEqual(actual, expected)
+            expected = {
+                'some_test_snippet': '# This should appear in the snippet ' + \
+                    'code\na = 1\nb = 2\na != b  # True\n# SNIPPET_END\n', 
+                'another_test_snippet': '# This should also appear in docs' + \
+                    '\nc = 3\nprint(c)\n# SNIPPET_END'
+            }
+            self.assertDictEqual(actual, expected)
 
 
 if __name__ == "__main__":
