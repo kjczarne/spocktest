@@ -16,6 +16,7 @@ class __StateStore:
     snippets: SnippetsCollection
     placeholders_filled: int
     debug_container: List[str]
+    debug: bool = False
 
     def reset(self):
         self.is_snippet = False
@@ -24,6 +25,7 @@ class __StateStore:
         self.snippets = {}
         self.placeholders_filled = 0
         self.debug_container = []
+        # do not reset self.debug!
 
 
 STATE: Final = __StateStore(False, None, 0, {}, 0, [])

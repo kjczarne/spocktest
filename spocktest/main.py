@@ -73,13 +73,15 @@ def main():
 
     args = parser.parse_args()
 
+    if args.debug:
+        STATE.debug = True
+
     extract(
         args.input,
         args.pattern      if args.pattern else SNIPPET_ID,
         args.end          if args.end else SNIPPET_END,
         args.exts         if args.exts else ALLOWED_CODE_EXTS,
         args.id_regex_ovd if args.id_regex_ovd else ID_TEMPLATE_REGEX,
-        args.debug        if args.debug else False
     )
     logger.info(f"Found: {len(STATE.snippets)} snippets")
     logger.info(f"Beginning injection...")
@@ -89,7 +91,6 @@ def main():
         STATE.snippets,
         args.output         if args.output else None,
         args.exts           if args.exts else ALLOWED_DOC_EXTS,
-        args.debug          if args.debug else False
     )
     logger.info(f"Injected snippets into {STATE.placeholders_filled} total placeholders")
     

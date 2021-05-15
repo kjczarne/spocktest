@@ -103,8 +103,7 @@ def extract(
     id_pattern:        str,
     finish:            str,
     allow_extensions:  List[str] = ALLOWED_CODE_EXTS,
-    id_regex_override: str = ID_TEMPLATE_REGEX,
-    debug:             bool = False
+    id_regex_override: str = ID_TEMPLATE_REGEX
 ):
     for root, dirs, files in os.walk(input_directory):
         for name in files:

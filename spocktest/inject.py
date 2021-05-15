@@ -52,8 +52,7 @@ def __process_file(
     name:                  str,
     id_extraction_pattern: str,
     snippets:              SnippetsCollection,
-    allowed_extensions:    List[str] = ALLOWED_DOC_EXTS,
-    debug:                 bool = False
+    allowed_extensions:    List[str] = ALLOWED_DOC_EXTS
 ):    
     # get the full path to the file and read it:
     file_path = os.path.join(root, name) if root else name
@@ -77,7 +76,7 @@ def __process_file(
             snippet_id
         )
     else:
-        if debug:
+        if STATE.debug:
             STATE.debug_container.append(new_contents)
         else:
             write_file(
@@ -91,8 +90,7 @@ def inject(
     id_extraction_pattern: str,
     snippets:              SnippetsCollection,
     out_path:              Optional[str] = None,
-    allowed_extensions:    List[str] = ALLOWED_DOC_EXTS,
-    debug:                 bool = False
+    allowed_extensions:    List[str] = ALLOWED_DOC_EXTS
 ):
     """Walks through an input directory with
     documentation files and creates a copy
@@ -108,8 +106,7 @@ def inject(
                 out_path,
                 id_extraction_pattern,
                 snippets,
-                allowed_extensions,
-                debug
+                allowed_extensions
             )
         else:
             return __process_file(
@@ -117,8 +114,7 @@ def inject(
                 path,
                 id_extraction_pattern,
                 snippets,
-                allowed_extensions,
-                debug
+                allowed_extensions
             )
 
     elif os.path.isdir(path):
@@ -136,8 +132,7 @@ def inject(
                         name,
                         id_extraction_pattern,
                         snippets,
-                        allowed_extensions,
-                        debug
+                        allowed_extensions
                     )
         else:
             # if no extra output dir is provided, we replace
@@ -149,8 +144,7 @@ def inject(
                         name,
                         id_extraction_pattern,
                         snippets,
-                        allowed_extensions,
-                        debug
+                        allowed_extensions
                     )
     else:
         raise ValueError(

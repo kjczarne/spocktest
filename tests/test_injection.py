@@ -19,6 +19,7 @@ class TestInjection(unittest.TestCase):
         # we reset the state first to prevent any clobbering
         # coming from other tests:
         STATE.reset()
+        STATE.debug = True
 
         inject(
             os.path.join(
@@ -26,8 +27,7 @@ class TestInjection(unittest.TestCase):
                 'res'
             ),
             SNIPPET_INJECT,
-            self.snippets,
-            debug=True
+            self.snippets
         )
 
         actual = STATE.debug_container[0].splitlines()

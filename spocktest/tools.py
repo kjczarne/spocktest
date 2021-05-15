@@ -1,6 +1,7 @@
 from typing import List, Optional
 import os
 from loguru import logger
+from spocktest.state import STATE
 
 
 def is_in_allowed_extensions(
@@ -19,7 +20,8 @@ def write_file(
     file_path:   str,
     replacement: str
 ):
-    logger.debug(f"Writing file {file_path}")
+    if STATE.debug:
+        logger.debug(f"Writing file {file_path}")
     with open(file_path, 'w') as f:
         f.write(replacement)
 
@@ -35,7 +37,8 @@ def load_file(
     if not is_allowed_ext:
         return
     
-    logger.debug(f"Reading file {file_path}")
+    if STATE.debug:
+        logger.debug(f"Reading file {file_path}")
 
     with open(file_path, 'r') as f:
         contents = f.read()

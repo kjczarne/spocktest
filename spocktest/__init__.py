@@ -1,5 +1,6 @@
 from loguru import logger
 import os
+import sys
 
-if not os.environ.get('SPOCK_DEBUG'):
-    logger.disable('spocktest')
+logger.remove(0)
+logger.add(sys.stdout, colorize=True, format="{level}: <level>{message}</level>")
