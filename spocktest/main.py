@@ -46,9 +46,16 @@ def main():
         type=str
     )
     parser.add_argument(
-        '-x', '--exts',
+        '-x', '--doc-exts',
         help='List of documentation file extensions to be ' + \
              f'considered. Default: {ALLOWED_DOC_EXTS}',
+        nargs='+',
+        type=str
+    )
+    parser.add_argument(
+        '-c', '--code-exts',
+        help='List of test file extensions to be ' + \
+             f'considered. Default: {ALLOWED_CODE_EXTS}',
         nargs='+',
         type=str
     )
@@ -80,7 +87,7 @@ def main():
         args.input,
         args.pattern      if args.pattern else SNIPPET_ID,
         args.end          if args.end else SNIPPET_END,
-        args.exts         if args.exts else ALLOWED_CODE_EXTS,
+        args.code_exts    if args.code_exts else ALLOWED_CODE_EXTS,
         args.id_regex_ovd if args.id_regex_ovd else ID_TEMPLATE_REGEX,
     )
     logger.info(f"Found: {len(STATE.snippets)} snippets")
@@ -90,7 +97,7 @@ def main():
         args.target_pattern if args.target_pattern else SNIPPET_INJECT,
         STATE.snippets,
         args.output         if args.output else None,
-        args.exts           if args.exts else ALLOWED_DOC_EXTS,
+        args.doc_exts       if args.doc_exts else ALLOWED_DOC_EXTS,
     )
     logger.info(f"Injected snippets into {STATE.placeholders_filled} total placeholders")
     
