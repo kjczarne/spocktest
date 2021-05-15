@@ -6,7 +6,7 @@ from spocktest.model import Snippet, SnippetLinesCollection, SnippetsCollection
 from spocktest.state import STATE
 from spocktest.tools import load_file
 from spocktest.defaults import ALLOWED_CODE_EXTS, ID_TEMPLATE_REGEX
-from typing import Dict, Final, List, Optional
+from typing import List, Tuple
 from collections import defaultdict
 from copy import copy
 from loguru import logger
@@ -21,14 +21,14 @@ def _get_snippet_code_from_fixture(snippet_func: Snippet) -> str:
     )
 
 
-def __snippet_id_found(snippet_id: str):
+def __snippet_id_found(snippet_id: str) -> Tuple[List[str], str]:
     """What should happen when snippet ID is found"""
     return [], snippet_id
 
 
 def __snippet_finish_found(
     existing_snippet_list: List[str]
-):
+) -> List[str]:
     """What should happen when snippet finish tag is found"""
     return existing_snippet_list
 
@@ -36,7 +36,7 @@ def __snippet_finish_found(
 def __snippet_line_found(
     existing_snippet_list: List[str], 
     line: str
-):
+) -> List[str]:
     """What should happen if a snippet line is found"""
     new_list = copy(existing_snippet_list)
     new_list.append(line)
@@ -104,7 +104,7 @@ def extract(
     finish:            str,
     allow_extensions:  List[str] = ALLOWED_CODE_EXTS,
     id_regex_override: str = ID_TEMPLATE_REGEX
-):
+) -> None:
     for root, dirs, files in os.walk(input_directory):
         for name in files:
             file_path = os.path.join(root, name) if root else name

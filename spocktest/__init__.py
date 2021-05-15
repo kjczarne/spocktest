@@ -1,5 +1,4 @@
 from loguru import logger
-import os
 import sys
 
 logger.remove(0)

@@ -90,8 +90,10 @@ def main():
         args.code_exts    if args.code_exts else ALLOWED_CODE_EXTS,
         args.id_regex_ovd if args.id_regex_ovd else ID_TEMPLATE_REGEX,
     )
+    
     logger.info(f"Found: {len(STATE.snippets)} snippets")
     logger.info(f"Beginning injection...")
+    
     inject(
         args.docs,
         args.target_pattern if args.target_pattern else SNIPPET_INJECT,
@@ -99,6 +101,7 @@ def main():
         args.output         if args.output else None,
         args.doc_exts       if args.doc_exts else ALLOWED_DOC_EXTS,
     )
+    
     logger.info(f"Injected snippets into {STATE.placeholders_filled} total placeholders")
     
 

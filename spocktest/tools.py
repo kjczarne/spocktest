@@ -1,5 +1,4 @@
 from typing import List, Optional
-import os
 from loguru import logger
 from spocktest.state import STATE
 
@@ -19,7 +18,7 @@ def is_in_allowed_extensions(
 def write_file(
     file_path:   str,
     replacement: str
-):
+) -> None:
     if STATE.debug:
         logger.debug(f"Writing file {file_path}")
     with open(file_path, 'w') as f:

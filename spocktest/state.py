@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, Final, List
 from spocktest.model import SnippetsCollection
-from collections import defaultdict
 
 
 @dataclass

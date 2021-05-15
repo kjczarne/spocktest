@@ -2,8 +2,7 @@ from spocktest.state import STATE
 from spocktest.model import SnippetsCollection
 from spocktest.tools import load_file, write_file
 from spocktest.defaults import ALLOWED_DOC_EXTS
-from loguru import logger
-from typing import Generator, List, Optional, Union
+from typing import List, Optional
 import os
 import re
 import shutil
@@ -13,7 +12,7 @@ def __replace_file_contents(
     id:       str,
     snippet:  str,
     contents: str
-):
+) -> str:
     return re.sub(id, snippet, contents)
 
 
@@ -23,7 +22,7 @@ def __recursive_replace(
     id_extraction_pattern: str,
     snippet:               str,
     snippet_id:            str,
-):
+) -> str:
     id_replacement_pattern = id_extraction_pattern.replace(
         '{{ID}}', snippet_id
     )
@@ -53,7 +52,7 @@ def __process_file(
     id_extraction_pattern: str,
     snippets:              SnippetsCollection,
     allowed_extensions:    List[str] = ALLOWED_DOC_EXTS
-):    
+) -> None:    
     # get the full path to the file and read it:
     file_path = os.path.join(root, name) if root else name
 
@@ -91,7 +90,7 @@ def inject(
     snippets:              SnippetsCollection,
     out_path:              Optional[str] = None,
     allowed_extensions:    List[str] = ALLOWED_DOC_EXTS
-):
+) -> None:
     """Walks through an input directory with
     documentation files and creates a copy
     of the documentation or does in-place
@@ -101,7 +100,7 @@ def inject(
     if os.path.isfile(path):
         if out_path:
             shutil.copyfile(path, out_path)
-            return __process_file(
+            __process_file(
                 None,
                 out_path,
                 id_extraction_pattern,
@@ -109,7 +108,7 @@ def inject(
                 allowed_extensions
             )
         else:
-            return __process_file(
+            __process_file(
                 None,
                 path,
                 id_extraction_pattern,
