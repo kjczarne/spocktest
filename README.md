@@ -1,6 +1,10 @@
-# spocktest
+<img src="static/SpocktestLogo.png" width="60">
+
+# Spocktest
 
 Spocktest is a Python tool that runs tests for code snippets defined in standard Python files and injects them into documentation. Think of it as [doctest](https://docs.python.org/3/library/doctest.html) but the other way around.
+
+![Spocktest GIF](static/spocktest.gif)
 
 ## Motivation
 
