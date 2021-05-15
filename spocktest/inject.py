@@ -1,8 +1,12 @@
+from spocktest.state import STATE
 from spocktest.model import SnippetsCollection
+from spocktest.tools import load_file, write_file
+from spocktest.defaults import ALLOWED_DOC_EXTS
 from loguru import logger
 from typing import Generator, List, Optional, Union
 import os
 import re
+import shutil
 
 
 def __replace_file_contents(
@@ -11,14 +15,6 @@ def __replace_file_contents(
     contents: str
 ):
     return re.sub(id, snippet, contents)
-
-
-def __write_file(
-    file_path:   str,
-    replacement: str
-):
-    with open(file_path, 'w') as f:
-        f.write(replacement)
 
 
 def __recursive_replace(
@@ -47,6 +43,7 @@ def __recursive_replace(
             snippet_id
         )
     else:
+        STATE.placeholders_filled += 1
         return contents
 
 
@@ -55,26 +52,21 @@ def __process_file(
     name:                  str,
     id_extraction_pattern: str,
     snippets:              SnippetsCollection,
-    ignore_extensions:     List[str] = [],
+    allowed_extensions:    List[str] = ALLOWED_DOC_EXTS,
     debug:                 bool = False
-):
-    # first check if the file extension is ok:
-    is_disallowed_ext = \
-        any(map(lambda ext: name.endswith(ext), ignore_extensions))
-    
-    if is_disallowed_ext:
-        return
-    
+):    
     # get the full path to the file and read it:
     file_path = os.path.join(root, name) if root else name
-    logger.debug(f"Reading file {file_path}")
 
-    with open(file_path, 'r') as f:
-        contents = f.read()
+    contents = load_file(file_path, allowed_extensions) 
     
+    # if the file has an ignored extension, it won't be
+    # loaded and we shall then return `None`
+    if not contents:
+        return
+
     # check if any of the known snippets matches
     # an ID used anywhere in the file:
-    logger.debug(f"Writing file {file_path}")
     new_contents = contents
     for snippet_id, snippet in snippets.items():
         new_contents = __recursive_replace(
@@ -86,40 +78,20 @@ def __process_file(
         )
     else:
         if debug:
-            return new_contents
+            STATE.debug_container.append(new_contents)
         else:
-            __write_file(
+            write_file(
                 file_path,
                 new_contents
             )
-        # id_replacement_pattern = id_extraction_pattern.replace(
-        #     '{{ID}}', snippet_id
-        # )
-        # m = re.search(
-        #     id_replacement_pattern,
-        #     contents
-        # )
-        # if m:
-        #     if debug:
-        #         repl = __replace_file_contents(
-        #             id_replacement_pattern, snippet, contents
-        #         )
-        #         return repl
-        #     else:
-        #         repl = __replace_file_contents(
-        #             id_replacement_pattern, snippet, contents
-        #         )
-        #         __write_file(
-        #             file_path,
-        #             repl
-        #         )
 
 
 def inject(
     path:                  str,
     id_extraction_pattern: str,
     snippets:              SnippetsCollection,
-    ignore_extensions:     List[str] = [],
+    out_path:              Optional[str] = None,
+    allowed_extensions:    List[str] = ALLOWED_DOC_EXTS,
     debug:                 bool = False
 ):
     """Walks through an input directory with
@@ -127,27 +99,59 @@ def inject(
     of the documentation or does in-place
     substitution of specific snippet IDs
     with corresponding snippets."""
+
     if os.path.isfile(path):
-        return __process_file(
-            None,
-            path,
-            id_extraction_pattern,
-            snippets,
-            ignore_extensions,
-            debug
-        )
+        if out_path:
+            shutil.copyfile(path, out_path)
+            return __process_file(
+                None,
+                out_path,
+                id_extraction_pattern,
+                snippets,
+                allowed_extensions,
+                debug
+            )
+        else:
+            return __process_file(
+                None,
+                path,
+                id_extraction_pattern,
+                snippets,
+                allowed_extensions,
+                debug
+            )
 
     elif os.path.isdir(path):
-        for root, dirs, files in os.walk(path):
-            for name in files:
-                return __process_file(
-                    root,
-                    name,
-                    id_extraction_pattern,
-                    snippets,
-                    ignore_extensions,
-                    debug
-                )
+        if out_path:
+            # if a different output dir is provided from the
+            # initial doc tree, we will copy the whole tree
+            # to `out_path` and then process the copy:
+            if os.path.exists(out_path):
+                shutil.rmtree(out_path)
+            shutil.copytree(path, out_path)
+            for root, dirs, files in os.walk(out_path):
+                for name in files:
+                    __process_file(
+                        root,
+                        name,
+                        id_extraction_pattern,
+                        snippets,
+                        allowed_extensions,
+                        debug
+                    )
+        else:
+            # if no extra output dir is provided, we replace
+            # the same doctree
+            for root, dirs, files in os.walk(path):
+                for name in files:
+                    __process_file(
+                        root,
+                        name,
+                        id_extraction_pattern,
+                        snippets,
+                        allowed_extensions,
+                        debug
+                    )
     else:
         raise ValueError(
             "Path is neither a directory nor a file " + \

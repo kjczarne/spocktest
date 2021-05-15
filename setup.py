@@ -11,6 +11,11 @@ with open("README.md", "r") as f:
 
 setup(
     name='spocktest',
+    entry_points={
+        'console_scripts': [
+            'spocktest = spocktest.main:main',
+        ],
+    },
     version='1.0.0',
     description='Embed unit test snippets into human-readable documentation',
     long_description=readme,

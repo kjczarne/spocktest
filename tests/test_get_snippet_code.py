@@ -1,7 +1,8 @@
 import unittest
 import textwrap
-from spocktest.extract import get_snippet_code
+from spocktest.extract import _get_snippet_code
 from spocktest.defaults import SNIPPET_END, SNIPPET_ID
+from spocktest.state import STATE
 
 
 class TestGetSnippetCode(unittest.TestCase):
@@ -29,8 +30,11 @@ class TestGetSnippetCode(unittest.TestCase):
         )
 
     def test_get_snippet_code(self):
+        # other tests may clobber STATE.snippets,
+        # hence the reset
+        STATE.reset()
         for f in self.line_markers_finish:
-            actual = get_snippet_code(
+            actual = _get_snippet_code(
                 self.ex1, 
                 SNIPPET_ID,
                 f

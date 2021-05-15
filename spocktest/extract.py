@@ -1,14 +1,18 @@
 import inspect
 import textwrap
 import re
+import os
 from spocktest.model import Snippet, SnippetLinesCollection, SnippetsCollection
+from spocktest.state import STATE
+from spocktest.tools import load_file
+from spocktest.defaults import ALLOWED_CODE_EXTS, ID_TEMPLATE_REGEX
 from typing import Dict, Final, List, Optional
 from collections import defaultdict
 from copy import copy
-from dataclasses import dataclass
+from loguru import logger
 
 
-def get_snippet_code_from_fixture(snippet_func: Snippet) -> str:
+def _get_snippet_code_from_fixture(snippet_func: Snippet) -> str:
     """Extracts snippet function code, omits the definition line 
     and dedents the snippet code.
     """
@@ -39,25 +43,14 @@ def __snippet_line_found(
     return new_list
 
 
-@dataclass
-class ExtractorState:
-    """State container for the snippet parser."""
-    # TODO: should be a Singleton
-    is_snippet: bool
-    current_snippet_id: Optional[str]
-    current_line: int
-
-
-STATE: Final = ExtractorState(False, None, 0)
-
-
-def get_snippet_code(
-    file_content: str,
-    id:           str,
-    finish:       str
+def _get_snippet_code(
+    file_content:      str,
+    id_pattern:        str,
+    finish:            str,
+    id_regex_override: str = ID_TEMPLATE_REGEX
 ) -> SnippetsCollection:
     """Extracts snippet code from an arbitrary file"""
-    id_pattern = id.replace('{{ID}}', r'(\w+)')
+    id_pattern = id_pattern.replace('{{ID}}', id_regex_override)
     lines = file_content.splitlines()
     snippets: SnippetLinesCollection = defaultdict(lambda: [])
     
@@ -68,6 +61,8 @@ def get_snippet_code(
         if m_id:
             # if an ID is found
             snippet, snippet_id = __snippet_id_found(m_id.groups()[0])
+            logger.info(f"Found snippet: {snippet_id}")
+            
             snippets[snippet_id] = snippet
             # TODO: move code from cases to the dunder functions
             # set current snippet ID state:
@@ -97,6 +92,34 @@ def get_snippet_code(
                 # extend snippet container every time a proper
                 # snippet line is found:
                 snippets[STATE.current_snippet_id] = snippet
-    return {
+    STATE.snippets.update({
         k: textwrap.dedent("\n".join(v)) for k, v in snippets.items()
-    }
+    })
+    return STATE.snippets
+
+
+def extract(
+    input_directory:   str,
+    id_pattern:        str,
+    finish:            str,
+    allow_extensions:  List[str] = ALLOWED_CODE_EXTS,
+    id_regex_override: str = ID_TEMPLATE_REGEX,
+    debug:             bool = False
+):
+    for root, dirs, files in os.walk(input_directory):
+        for name in files:
+            file_path = os.path.join(root, name) if root else name
+
+            contents = load_file(file_path, allow_extensions)
+
+            if not contents:
+                return
+            
+            # extractor loads snippets to the `STATE`
+            # container
+            _get_snippet_code(
+                contents,
+                id_pattern,
+                finish,
+                id_regex_override
+            )

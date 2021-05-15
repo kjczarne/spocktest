@@ -4,3 +4,4 @@ __pycache__
 *.ipynb
 venv
 *.env
+tests/integration/output

@@ -3,6 +3,7 @@ import unittest
 import textwrap
 from spocktest.inject import inject
 from spocktest.defaults import SNIPPET_INJECT
+from spocktest.state import STATE
 
 
 class TestInjection(unittest.TestCase):
@@ -15,7 +16,11 @@ class TestInjection(unittest.TestCase):
         }
 
     def test_injection(self):
-        actual = inject(
+        # we reset the state first to prevent any clobbering
+        # coming from other tests:
+        STATE.reset()
+
+        inject(
             os.path.join(
                 os.path.dirname(__file__),
                 'res'
@@ -23,7 +28,9 @@ class TestInjection(unittest.TestCase):
             SNIPPET_INJECT,
             self.snippets,
             debug=True
-        ).splitlines()
+        )
+
+        actual = STATE.debug_container[0].splitlines()
         expected = [
             "# Sample documentation",
             "",
