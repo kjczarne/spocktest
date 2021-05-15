@@ -46,7 +46,9 @@ Spocktest is in early stages of development. If used in production, it's **recom
   * By default placeholders are written as `# --Snippet--: {{ID}}`.
     * Can be overridden with `--target-pattern` flag.
   * By default `.md` and `.rst` files are supported for substitution.
-    * Can be overridden with `--exts` flag.
+    * Can be overridden with `--doc-exts` flag.
+  * By default `.oy` files are searched for snippets.
+    * Can be overridden with `--code-exts` flag.
   * By default the `{{ID}}` value needs to match `(\w+)` regex pattern, i.e spaces are not supported, unless overridden.
     * Can be overridden with `--id-regex-ovd` flag.
 
