@@ -8,3 +8,4 @@ tests/integration/output
 dist
 build
 *.whl
+.DS_Store
