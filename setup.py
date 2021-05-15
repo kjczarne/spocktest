@@ -19,6 +19,7 @@ setup(
     version='1.0.0',
     description='Embed unit test snippets into human-readable documentation',
     long_description=readme,
+    long_description_content_type='text/markdown',
     author='Krzysztof Czarnecki',
     author_email='kjczarne@gmail.com',
     install_requires=DEPENDENCIES
