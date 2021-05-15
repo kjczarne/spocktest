@@ -1,4 +1,4 @@
-<img src="static/SpocktestLogo.png" width="85">
+<img src="static/SpocktestLogo.png" width="120">
 
 # Spocktest
 
