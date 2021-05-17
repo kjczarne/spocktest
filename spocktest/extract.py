@@ -112,7 +112,7 @@ def extract(
             contents = load_file(file_path, allow_extensions)
 
             if not contents:
-                return
+                continue
             
             # extractor loads snippets to the `STATE`
             # container
