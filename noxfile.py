@@ -1,10 +1,17 @@
 import nox
+import shutil
 
 
 @nox.session
 def test(session: nox.Session):
     session.install('.')
     session.run('python', '-m', 'unittest')
+
+
+@nox.session
+def clear(session: nox.Session):
+    shutil.rmtree('dist', ignore_errors=True)
+    shutil.rmtree('build', ignore_errors=True)
 
 
 @nox.session
