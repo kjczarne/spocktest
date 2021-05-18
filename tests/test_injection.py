@@ -12,7 +12,9 @@ class TestInjection(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.snippets = {
             'test_inject1': 'a = 1',
-            'test_inject2': 'b = 2\nc = 3'
+            'test_inject2': 'b = 2\nc = 3',
+            'test_inject_with_indent': 'd = 4\ne = 5',
+            'test_inject_indent_nonhomogenous': 'if a == 1:\n    f = 6'
         }
 
     def test_injection(self):
@@ -43,6 +45,16 @@ class TestInjection(unittest.TestCase):
             "```python",
             "b = 2",
             "c = 3",
+            "```",
+            "",
+            "```python",
+            "    d = 4",
+            "    e = 5",
+            "```",
+            "",
+            "```python",
+            "if a == 1:",
+            "    f = 6",
             "```"
         ]
         self.assertListEqual(actual, expected)

@@ -26,14 +26,20 @@ def __recursive_replace(
     id_replacement_pattern = id_extraction_pattern.replace(
         '{{ID}}', snippet_id
     )
-    m = re.search(
-        id_replacement_pattern,
-        contents
-    )
+    # match whitespace and lock indentation offset on the tag indent
+    m = re.search(f'([\\t ]+)?({id_replacement_pattern})', contents)
     if m:
+        indent, match_pattern = m.groups()
+        
+        # first line is already indented correctly, the rest needs to be offset
+        lines = snippet.splitlines()
+        lines = [lines[0]] + [indent + i for i in lines[1:]] if indent else lines
+        snippet_with_indent = "\n".join(lines)
+        
         repl = __replace_file_contents(
-            id_replacement_pattern, snippet, contents
+            match_pattern, snippet_with_indent, contents
         )
+        
         return __recursive_replace(
             file_path,
             repl,
