@@ -16,7 +16,7 @@ setup(
             'spocktest = spocktest.main:main',
         ],
     },
-    version='1.0.2',
+    version='1.0.3',
     description='Embed unit test snippets into human-readable documentation',
     long_description=readme,
     long_description_content_type='text/markdown',
